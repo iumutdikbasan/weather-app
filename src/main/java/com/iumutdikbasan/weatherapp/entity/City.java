@@ -22,7 +22,7 @@ public class City extends BaseEntity {
     @Column(name = "NAME",length = 100,nullable = false)
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user")
     private User user;
 }
