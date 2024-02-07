@@ -1,6 +1,7 @@
 package com.iumutdikbasan.weatherapp.entity;
 
 import com.iumutdikbasan.weatherapp.general.BaseEntity;
+import com.iumutdikbasan.weatherapp.security.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;

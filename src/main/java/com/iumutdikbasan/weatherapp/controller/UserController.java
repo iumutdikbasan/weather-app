@@ -17,11 +17,11 @@ import java.util.List;
 public class UserController {
     private final UserControllerContract userControllerContract;
 
-    @PostMapping
-    public ResponseEntity<RestResponse<UserDTO>> save(@RequestBody UserSaveRequestDTO userSaveRequestDTO){
-        UserDTO userDTO = userControllerContract.save(userSaveRequestDTO);
-        return ResponseEntity.ok(RestResponse.of(userDTO));
-    }
+//    @PostMapping
+//    public ResponseEntity<RestResponse<UserDTO>> save(@RequestBody UserSaveRequestDTO userSaveRequestDTO){
+//        UserDTO userDTO = userControllerContract.save(userSaveRequestDTO);
+//        return ResponseEntity.ok(RestResponse.of(userDTO));
+//    }
 
     @GetMapping
     public ResponseEntity<RestResponse<List<UserDTO>>> findAll(){
