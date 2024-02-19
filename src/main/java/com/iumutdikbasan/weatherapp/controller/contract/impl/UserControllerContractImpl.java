@@ -1,7 +1,8 @@
 package com.iumutdikbasan.weatherapp.controller.contract.impl;
 
 import com.iumutdikbasan.weatherapp.controller.contract.UserControllerContract;
-import com.iumutdikbasan.weatherapp.dto.user.UserDTO;
+import com.iumutdikbasan.weatherapp.dto.user.response.UserResponseDTO;
+import com.iumutdikbasan.weatherapp.kafka.service.KafkaService;
 import com.iumutdikbasan.weatherapp.mapper.UserMapper;
 import com.iumutdikbasan.weatherapp.security.user.User;
 import com.iumutdikbasan.weatherapp.service.UserEntityService;
@@ -16,23 +17,14 @@ public class UserControllerContractImpl implements UserControllerContract {
 
     private final UserEntityService service;
     private final UserMapper mapper;
-//    @Override
-//    public UserDTO save(UserSaveRequestDTO userSaveRequestDTO) {
-//
-//        String username = userSaveRequestDTO.username();
-//        boolean isUsernameTaken = service.existByUsername(username);
-//        if (isUsernameTaken) {
-//            throw new BusinessException(UserErrorMessage.USERNAME_ALREADY_TAKEN);
-//        }
-//        User user = mapper.convertToUser(userSaveRequestDTO);
-//
-//        service.save(user);
-//        return mapper.convertToUserDTO(user);
-//    }
+    private final KafkaService kafkaService;
+
+
 
     @Override
-    public List<UserDTO> findAll() {
+    public List<UserResponseDTO> findAll() {
         List<User> userList = service.findAll();
+        kafkaService.sendMessageInfo("Users returned!", "logs");
         return mapper.convertToUserDtoList(userList);
     }
 }

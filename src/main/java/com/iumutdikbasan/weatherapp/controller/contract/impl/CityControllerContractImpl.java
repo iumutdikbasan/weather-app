@@ -3,12 +3,15 @@ package com.iumutdikbasan.weatherapp.controller.contract.impl;
 import com.iumutdikbasan.weatherapp.controller.contract.CityControllerContract;
 import com.iumutdikbasan.weatherapp.dto.city.request.CitySaveRequestDTO;
 import com.iumutdikbasan.weatherapp.dto.city.response.CityResponseDTO;
+import com.iumutdikbasan.weatherapp.dto.user.response.UserResponseDTO;
 import com.iumutdikbasan.weatherapp.entity.City;
 import com.iumutdikbasan.weatherapp.errormessages.CityErrorMessage;
 import com.iumutdikbasan.weatherapp.exception.cityexceptions.CityNotCreatedException;
 import com.iumutdikbasan.weatherapp.exception.cityexceptions.CityNotDeletedException;
 import com.iumutdikbasan.weatherapp.exception.cityexceptions.CityNotFoundException;
+import com.iumutdikbasan.weatherapp.kafka.service.KafkaService;
 import com.iumutdikbasan.weatherapp.mapper.CityMapper;
+import com.iumutdikbasan.weatherapp.mapper.UserMapper;
 import com.iumutdikbasan.weatherapp.security.user.User;
 import com.iumutdikbasan.weatherapp.service.CityEntityService;
 import com.iumutdikbasan.weatherapp.service.UserEntityService;
@@ -52,11 +55,9 @@ public class CityControllerContractImpl implements CityControllerContract {
     public CityResponseDTO save(CitySaveRequestDTO citySaveRequestDTO) {
         City city = mapper.convertToCity(citySaveRequestDTO);
         User user = userEntityService.extractUser();
-        //TODO şehri boş gönderemezsiniz hatası
         try {
             city.setUser(user);
             service.save(city);
-            //TODO: log
             return mapper.convertToCityDto(city);
         }catch (Exception e){
             throw  new CityNotCreatedException(CityErrorMessage.CITY_NOT_CREATED_WITH_USER_ID.getMessage() + user.getId());

@@ -1,12 +1,10 @@
 package com.iumutdikbasan.weatherapp.controller;
 
 import com.iumutdikbasan.weatherapp.controller.contract.UserControllerContract;
-import com.iumutdikbasan.weatherapp.dto.user.UserDTO;
-import com.iumutdikbasan.weatherapp.dto.user.UserSaveRequestDTO;
+import com.iumutdikbasan.weatherapp.dto.user.response.UserResponseDTO;
 import com.iumutdikbasan.weatherapp.general.RestResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,8 +22,8 @@ public class UserController {
 //    }
 
     @GetMapping
-    public ResponseEntity<RestResponse<List<UserDTO>>> findAll(){
-        List<UserDTO> userDTOList = userControllerContract.findAll();
-        return ResponseEntity.ok(RestResponse.of(userDTOList));
+    public ResponseEntity<RestResponse<List<UserResponseDTO>>> findAll(){
+        List<UserResponseDTO> userResponseDTOList = userControllerContract.findAll();
+        return ResponseEntity.ok(RestResponse.of(userResponseDTOList));
     }
 }

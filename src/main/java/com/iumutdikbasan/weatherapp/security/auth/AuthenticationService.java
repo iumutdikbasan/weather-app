@@ -1,6 +1,10 @@
 package com.iumutdikbasan.weatherapp.security.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.iumutdikbasan.weatherapp.errormessages.UserErrorMessage;
+import com.iumutdikbasan.weatherapp.exception.userexception.AuthenticationFailedException;
+import com.iumutdikbasan.weatherapp.exception.userexception.UserNotCreatedException;
+import com.iumutdikbasan.weatherapp.kafka.service.KafkaService;
 import com.iumutdikbasan.weatherapp.security.config.JwtService;
 import com.iumutdikbasan.weatherapp.security.dto.AuthenticationRequestDTO;
 import com.iumutdikbasan.weatherapp.security.dto.AuthenticationResponseDTO;
@@ -9,6 +13,7 @@ import com.iumutdikbasan.weatherapp.security.token.Token;
 import com.iumutdikbasan.weatherapp.security.token.TokenRepository;
 import com.iumutdikbasan.weatherapp.security.token.TokenType;
 import com.iumutdikbasan.weatherapp.security.user.Role;
+import com.iumutdikbasan.weatherapp.dto.user.response.UserResponseDTO;
 import com.iumutdikbasan.weatherapp.security.user.User;
 import com.iumutdikbasan.weatherapp.security.user.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,10 +21,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.naming.AuthenticationException;
 import java.io.IOException;
 
 @Service
@@ -30,42 +37,75 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final KafkaService kafkaService;
 
-    public AuthenticationResponseDTO register(RegisterRequest request){
-        var user = User.builder()
-                .firstName(request.getFirstname())
-                .lastname(request.getLastname())
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.USER)
-                .build();
-        var savedUser = repository.save(user);
-        var jwtToken = jwtService.generateToken(user);
-        var refreshToken = jwtService.generateRefreshToken(user);
-        saveUserToken(savedUser,jwtToken);
-        return AuthenticationResponseDTO.builder()
-                .accessToken(jwtToken)
-                .refreshToken(refreshToken)
-                .build();
+    public AuthenticationResponseDTO register(RegisterRequest request) {
+        try{
+            validateEmailNotTaken(request.getEmail());
+
+            var user = User.builder()
+                    .firstname(request.getFirstname())
+                    .lastname(request.getLastname())
+                    .email(request.getEmail())
+                    .password(passwordEncoder.encode(request.getPassword()))
+                    .role(Role.USER)
+                    .build();
+
+            var savedUser = repository.save(user);
+            var jwtToken = jwtService.generateToken(user);
+            var refreshToken = jwtService.generateRefreshToken(user);
+            saveUserToken(savedUser, jwtToken);
+
+            kafkaService.sendMessageInfo("User registered: " + user.getEmail(), "logs");
+
+            return AuthenticationResponseDTO.builder()
+                    .accessToken(jwtToken)
+                    .refreshToken(refreshToken)
+                    .build();}
+        catch (UserNotCreatedException e){
+            kafkaService.sendMessageError("Error registering user: " + e.getMessage(), "logs");
+            throw new UserNotCreatedException(UserErrorMessage.USER_NOT_CREATED.getMessage());
+        }
     }
+
+    private void validateEmailNotTaken(String email) {
+        if (repository.existsByEmail(email)) {
+            throw new UserNotCreatedException(UserErrorMessage.EMAIL_ALREADY_TAKEN.getMessage() + email);
+        }
+    }
+
     public AuthenticationResponseDTO authenticate(AuthenticationRequestDTO request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
-                )
-        );
-        var user = repository.findByEmail(request.getEmail())
-                .orElseThrow();
-        var jwtToken = jwtService.generateToken(user);
-        var refreshToken = jwtService.generateRefreshToken(user);
-        revokeAllUserTokens(user);
-        saveUserToken(user, jwtToken);
-        return AuthenticationResponseDTO.builder()
-                .accessToken(jwtToken)
-                .refreshToken(refreshToken)
-                .build();
+
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getEmail(),
+                            request.getPassword()
+                    )
+            );
+            var user = repository.findByEmail(request.getEmail())
+                    .orElseThrow();
+            var jwtToken = jwtService.generateToken(user);
+            var refreshToken = jwtService.generateRefreshToken(user);
+            revokeAllUserTokens(user);
+            saveUserToken(user, jwtToken);
+
+            kafkaService.sendMessageInfo("User authenticated: " + user.getEmail(), "logs");
+
+            return AuthenticationResponseDTO.builder()
+                    .accessToken(jwtToken)
+                    .refreshToken(refreshToken)
+                    .build();
+        }catch (BadCredentialsException e){
+            kafkaService.sendMessageError("Error authenticating user: " + e.getMessage(), "logs");
+            throw new AuthenticationFailedException(UserErrorMessage.INVALID_EMAIL_OR_PASSWORD.getMessage() + e.getMessage());
+        }catch (AuthenticationException e){
+            kafkaService.sendMessageError("Error authenticating user: " + e.getMessage(), "logs");
+            throw new AuthenticationFailedException(UserErrorMessage.AUTHENTICATION_FAILED.getMessage() + e.getMessage());
+
+        }
     }
+
     private void saveUserToken(User user, String jwtToken) {
         var token = Token.builder()
                 .user(user)
@@ -76,6 +116,7 @@ public class AuthenticationService {
                 .build();
         tokenRepository.save(token);
     }
+
     private void revokeAllUserTokens(User user) {
         var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
         if (validUserTokens.isEmpty())
@@ -86,14 +127,13 @@ public class AuthenticationService {
         });
         tokenRepository.saveAll(validUserTokens);
     }
-    public void refreshToken(
-            HttpServletRequest request,
-            HttpServletResponse response
-    ) throws IOException {
+
+    public void refreshToken(HttpServletRequest request,HttpServletResponse response) throws IOException
+    {
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         final String refreshToken;
         final String userEmail;
-        if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return;
         }
         refreshToken = authHeader.substring(7);
@@ -105,6 +145,7 @@ public class AuthenticationService {
                 var accessToken = jwtService.generateToken(user);
                 revokeAllUserTokens(user);
                 saveUserToken(user, accessToken);
+                kafkaService.sendMessageInfo("Token refreshed for user: " + user.getEmail(), "logs");
                 var authResponse = AuthenticationResponseDTO.builder()
                         .accessToken(accessToken)
                         .refreshToken(refreshToken)

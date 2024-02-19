@@ -27,17 +27,17 @@ import java.util.List;
 public class User extends BaseEntity implements UserDetails {
 
     @Id
-    @GeneratedValue(generator = "User", strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = "User" ,strategy = GenerationType.SEQUENCE)
     @SequenceGenerator(name = "User", sequenceName = "USER_ID_SEQ")
     private Long id;
 
     @NotBlank
-    @Size(min = 2, max = 100, message = "First name must be at least 2 characters")
+    @Size(min=2, max=100, message = "First name must be at least 2 characters")
     @Column(name = "FIRST_NAME", length = 100, nullable = false)
-    private String firstName;
+    private String firstname;
 
     @NotBlank
-    @Size(min = 2, max = 100, message = "Last name must be at least 2 characters")
+    @Size(min=2, max=100, message = "Last name must be at least 2 characters")
     @Column(name = "LAST_NAME", length = 100, nullable = false)
     private String lastname;
 
@@ -46,12 +46,13 @@ public class User extends BaseEntity implements UserDetails {
     private String email;
 
     @NotBlank
-    @Size(min = 6, max = 400, message = "Password must be at least 2 characters")
+    @Size(min=6, max=400, message = "Password must be at least 2 characters")
     @Column(name = "PASSWORD", length = 400, nullable = false)
     private String password;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @OneToMany(fetch = FetchType.LAZY,  mappedBy = "user")
     private List<City> cities = new ArrayList<>();
+
     @Enumerated(EnumType.STRING)
     private Role role;
 
