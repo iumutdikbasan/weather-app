@@ -1,10 +1,7 @@
 [Türkçe Açıklama için tıklayınız](#TR)
 # EN
 # Weather App
-This project is a weather application developed using Spring Boot.
-The application provides weather forecasts using a RESTful web service.
-It allows users to query the weather forecast in a city. Weather forecasts are provided in 3-hour intervals covering a 5-day period.
-The app retrieves weather forecasts using the OpenWeatherMap API.
+This application will provide weather forecasts using a RESTful web service. Users will be offered the opportunity to query the weather forecast in a city. Forecasts will be provided in 3-hour intervals covering a 5-day period. The application will receive weather forecasts using the OpenWeatherMap API.
 
 ### Backend:
 - A RESTful web service developed with Spring Boot. Provides weather forecast by taking city and other parameters.
@@ -86,10 +83,8 @@ Additionally, the project scope includes tests and API documentation.
 
 
 # Hava Durumu Uygulaması
-Bu proje, Spring Boot kullanılarak geliştirilen bir hava durumu uygulamasıdır. 
-Uygulama, RESTful bir web servisi kullanarak hava durumu tahminleri sağlar. 
-Kullanıcılara bir şehirdeki hava durumu tahminlerini sorgulama imkanı sunar. Hava durumu tahminleri, 5 günlük süreyi kapsayan 3 saatlik aralıklarla sağlanır.
-Uygulama, OpenWeatherMap API'sini kullanarak hava durumu tahminlerini alır.
+
+Bu uygulama RESTful bir web servisi kullanarak hava durumu tahminleri sağlayacaktır. Kullanıcılara, bir şehirdeki hava durumu tahminlerini sorgulama imkanı sunulacaktır. Tahminler, 5 günlük süreyi kapsayan 3 saatlik aralıklarla sağlanacaktır. Uygulama, OpenWeatherMap API'sini kullanarak hava durumu tahminleri alacaktır.
 
 ## Proje İçeriği
 Proje, aşağıdaki bileşenleri içerir:
