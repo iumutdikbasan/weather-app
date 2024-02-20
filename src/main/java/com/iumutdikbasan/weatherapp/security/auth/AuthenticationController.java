@@ -1,8 +1,8 @@
 package com.iumutdikbasan.weatherapp.security.auth;
 
-import com.iumutdikbasan.weatherapp.security.dto.AuthenticationRequestDTO;
-import com.iumutdikbasan.weatherapp.security.dto.AuthenticationResponseDTO;
-import com.iumutdikbasan.weatherapp.security.dto.RegisterRequestDTO;
+import com.iumutdikbasan.weatherapp.security.auth.dto.AuthenticationRequestDTO;
+import com.iumutdikbasan.weatherapp.security.auth.dto.AuthenticationResponseDTO;
+import com.iumutdikbasan.weatherapp.security.auth.dto.RegisterRequestDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.iumutdikbasan.weatherapp.security.config;
+package com.iumutdikbasan.weatherapp.security.auth.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

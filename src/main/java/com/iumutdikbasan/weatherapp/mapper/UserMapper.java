@@ -1,7 +1,7 @@
 package com.iumutdikbasan.weatherapp.mapper;
 
 import com.iumutdikbasan.weatherapp.dto.user.response.UserResponseDTO;
-import com.iumutdikbasan.weatherapp.security.dto.AuthenticationRequestDTO;
+import com.iumutdikbasan.weatherapp.security.auth.dto.AuthenticationRequestDTO;
 import com.iumutdikbasan.weatherapp.security.user.User;
 import org.mapstruct.Mapper;
 

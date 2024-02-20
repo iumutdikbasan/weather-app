@@ -1,4 +1,4 @@
-package com.iumutdikbasan.weatherapp.security.config;
+package com.iumutdikbasan.weatherapp.security.auth.config;
 
 import com.iumutdikbasan.weatherapp.security.token.TokenRepository;
 import jakarta.servlet.http.HttpServletRequest;

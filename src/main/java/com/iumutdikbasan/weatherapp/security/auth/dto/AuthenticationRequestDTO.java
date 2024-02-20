@@ -1,4 +1,4 @@
-package com.iumutdikbasan.weatherapp.security.dto;
+package com.iumutdikbasan.weatherapp.security.auth.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

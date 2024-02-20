@@ -1,4 +1,4 @@
-package com.iumutdikbasan.weatherapp.security.config;
+package com.iumutdikbasan.weatherapp.security.auth.config;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
