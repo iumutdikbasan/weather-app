@@ -1,7 +1,87 @@
-[English description](#EN)
-[Türkçe Açıklama](#TR)
+[Türkçe Açıklama için tıklayınız](#TR)
+# EN
+# Weather App
+This project is a weather application developed using Spring Boot.
+The application provides weather forecasts using a RESTful web service.
+It allows users to query the weather forecast in a city. Weather forecasts are provided in 3-hour intervals covering a 5-day period.
+The app retrieves weather forecasts using the OpenWeatherMap API.
+
+### Backend:
+- A RESTful web service developed with Spring Boot. Provides weather forecast by taking city and other parameters.
+### Daily Predictions: 
+- Weather forecasts are provided in 3-hour intervals covering a 5-day period.
+### User Registration: 
+- By creating an account, users can save their cities and view weather forecasts for saved cities.
+
+## Used technologies
+
+- Spring Boot
+- Maven
+- Spring Data JPA
+- Spring Security
+- Spring Validation
+- Spring Web
+- Spring Cloud OpenFeign
+- Spring Kafka (Logging)
+- SLF4J (Loglama)
+- JSON Web Token (JWT)
+- PostgreSQL
+- Lombok
+- MapStruct
+- Mockito(Tests)
+- SpringDoc OpenAPI (Documentation)
+- Spring Kafka Test
+- Spring Security Test
+
+## APIs
+![image](https://github.com/iumutdikbasan/weather-app/assets/54438200/e840b39b-152b-4489-b60b-ee1a7fc7f5b8)
 
 
+The application automatically provides API documentation with the SpringDoc OpenAPI tool. Once the application runs successfully, you can access the API documentation via the following URL:
+```
+http://localhost:8080/swagger-ui.html
+```
+
+## Tests
+Tests were written to ensure the quality and functionality of the project.
+Testing is performed using Spring Boot Testing Framework.
+You can use the following command to run the tests:
+```
+mvn test
+```
+
+## Project Details
+This project forms the backend part of a weather application.
+The application allows users to save and view weather forecasts for cities.
+Below you can find more detailed descriptions of the different components of the project.
+
+### CityController
+CityController is a controller class that processes HTTP requests related to cities. The relevant endpoints are:
+
+- GET /api/v1/cities: Returns the cities saved by the user.
+- POST /api/v1/cities: Allows the user to save a new city.
+- DELETE /api/v1/cities/{id}: Deletes cities by id.
+### UserController
+UserController is a controller class that processes HTTP requests related to users. The relevant endpoints are:
+
+- GET /api/v1/users: Get all users
+- GET /api/v1/users/user/cities/{unit}: It brings weather data of the cities saved by the user.
+### AuthenticationController
+AuthenticationController is a controller class that processes HTTP requests related to user authentication and registration. The relevant endpoints are:
+
+- POST /api/v1/auth/register: Allows the user to register.
+- POST /api/v1/auth/authenticate: Provides user authentication.
+- POST /api/v1/auth/refresh-token: Performs the user's token renewal process.
+### WeatherController
+WeatherController uses the OpenWeatherMap API to get weather forecasts.
+- GET /api/v1/weather/data: Brings weather forecasts.
+### Includes
+Includes database integration, DTOs, service classes, and other helper classes. These enable the recording, querying and management of weather forecasts by collaborating with the relevant controller classes.
+
+## Conclusion
+In this project, a weather application was developed using Spring Boot and other technologies.
+The project enables the creation of a RESTful web service, database integration, API usage and log tracking.
+Additionally, the project scope includes tests and API documentation.
 # TR
 
 
@@ -16,22 +96,10 @@ Proje, aşağıdaki bileşenleri içerir:
 
 ### Backend:
 - Spring Boot ile geliştirilmiş bir RESTful web servisi. Şehir ve diğer parametreleri alarak hava durumu tahmini sağlar.
-### Veritabanı:
-- Kullanıcıların aradığı şehirleri ve tahminleri kaydetmek için bir veritabanı sistemi kullanılır.
 ### Günlük Tahminler: 
 - Hava durumu tahminleri, 5 günlük süreyi kapsayan 3 saatlik aralıklarla sağlanır.
 ### Kullanıcı Kaydı: 
 - Kullanıcılar, bir hesap oluşturarak şehirlerini kaydedebilir ve kaydedilen şehirler için hava durumu tahminlerini görüntüleyebilir.
-### API Kullanımı:
-- OpenWeatherMap API'si, hava durumu tahminlerini sağlamak için kullanılır.
-### Testler: 
-- Kod kalitesini ve performansı sağlamak için otomatik testler yazılır.
-### Dokümantasyon: 
-- Swagger kullanılarak RESTful servisin dokümantasyonu sağlanır.
-### Loglama: 
-- Uygulamanın hata ayıklanmasına yardımcı olmak için loglama mekanizması kurulur.
-
-
 ## Kullanılan Teknolojiler
 Projenin geliştirilmesinde aşağıdaki teknolojiler kullanılmıştır:
 
@@ -48,7 +116,7 @@ Projenin geliştirilmesinde aşağıdaki teknolojiler kullanılmıştır:
 - PostgreSQL
 - Lombok
 - MapStruct
-- Mockito
+- Mockito(Test işlemleri)
 - SpringDoc OpenAPI (Dokümantasyon)
 - Spring Kafka Test
 - Spring Security Test
