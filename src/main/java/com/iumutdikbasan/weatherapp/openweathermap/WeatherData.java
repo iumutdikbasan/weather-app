@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -108,5 +109,29 @@ public class WeatherData {
     public static class Sys{
         public String pod;
 
+    }
+    @Override
+    public boolean equals(Object o){
+        if (this == o) return true;
+        if (o ==null || getClass() != o.getClass()) return false;
+        WeatherData that = (WeatherData) o;
+        return cnt == that.cnt && Objects.equals(list,that.list) && Objects.equals(city,that.city) &&
+                Objects.equals(cod,that.cod) && Objects.equals(message, that.message);
+    }
+
+    @Override
+    public int hashCode(){
+        return Objects.hash(cnt,list,city,cod,message);
+    }
+
+    @Override
+    public String toString() {
+        return "WeatherData{" +
+                "cnt=" + cnt +
+                ", list=" + list +
+                ", city=" + city +
+                ", cod='" + cod + '\'' +
+                ", message='" + message + '\'' +
+                '}';
     }
 }

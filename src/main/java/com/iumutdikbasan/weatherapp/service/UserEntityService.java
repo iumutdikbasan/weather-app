@@ -3,6 +3,7 @@ package com.iumutdikbasan.weatherapp.service;
 
 import com.iumutdikbasan.weatherapp.entity.City;
 import com.iumutdikbasan.weatherapp.errormessages.UserErrorMessage;
+import com.iumutdikbasan.weatherapp.exception.userexception.UserNotFoundException;
 import com.iumutdikbasan.weatherapp.general.BaseEntityService;
 import com.iumutdikbasan.weatherapp.general.ItemNotFoundException;
 import com.iumutdikbasan.weatherapp.security.user.User;
@@ -44,7 +45,7 @@ public class UserEntityService extends BaseEntityService<User, UserRepository> {
             User user = repository.findByEmail(userDetails.getUsername()).orElseThrow();
             return user;
         } else {
-            throw new ItemNotFoundException(UserErrorMessage.USERS_NOT_FOUND);
+            throw new UserNotFoundException(UserErrorMessage.USERS_NOT_FOUND.getMessage());
         }
     }
 }
