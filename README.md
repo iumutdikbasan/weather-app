@@ -23,7 +23,7 @@ The app retrieves weather forecasts using the OpenWeatherMap API.
 - Spring Web
 - Spring Cloud OpenFeign
 - Spring Kafka (Logging)
-- SLF4J (Loglama)
+- SLF4J (Logging)
 - JSON Web Token (JWT)
 - PostgreSQL
 - Lombok
