@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
+
+@RestController
 @RequestMapping("/api/v1/cities")
 @RequiredArgsConstructor
 public class CityController {
 
     private final CityControllerContract cityControllerContract;
-
 
     @GetMapping
     public ResponseEntity<RestResponse<List<CityResponseDTO>>> findCityByUserId(){
@@ -30,7 +30,8 @@ public class CityController {
         CityResponseDTO cityResponseDTO = cityControllerContract.save(citySaveRequestDTO);
         return ResponseEntity.ok(RestResponse.of(cityResponseDTO));
     }
-    @DeleteMapping
+
+    @DeleteMapping("/{id}")
     public ResponseEntity<RestResponse<Object>> delete(@PathVariable Long id){
         cityControllerContract.delete(id);
         return ResponseEntity.ok(RestResponse.empty());

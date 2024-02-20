@@ -24,6 +24,6 @@ public class City extends BaseEntity {
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user")
+    @JoinColumn(name = "USER_ID")
     private User user;
 }

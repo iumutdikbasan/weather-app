@@ -4,6 +4,11 @@ import com.iumutdikbasan.weatherapp.entity.City;
 import com.iumutdikbasan.weatherapp.general.BaseEntity;
 import com.iumutdikbasan.weatherapp.security.token.Token;
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -13,10 +18,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 @Data
 @Builder
