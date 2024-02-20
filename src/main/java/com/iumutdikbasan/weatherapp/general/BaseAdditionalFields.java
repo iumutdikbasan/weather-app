@@ -16,11 +16,11 @@ Java nesnesi tarafından farklı sınıflar ile yönettiğimiz alanları, verita
 @Setter
 public class BaseAdditionalFields {
 
-    @Column(name = "ID_CUSTOMER_CREATED_BY")
-    private Long createdBy;
+    @Column(name = "ID_USER_CREATED_BY")
+    private  String createdBy;
 
-    @Column(name = "ID_CUSTOMER_UPTATED_BY")
-    private Long updatedBy;
+    @Column(name = "ID_USER_UPDATED_BY")
+    private  String updatedBy;
 
     @Column(name = "CREATE_DATE")
     private LocalDateTime createDate;

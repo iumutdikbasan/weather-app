@@ -8,12 +8,11 @@ import com.iumutdikbasan.weatherapp.kafka.service.KafkaService;
 import com.iumutdikbasan.weatherapp.security.config.JwtService;
 import com.iumutdikbasan.weatherapp.security.dto.AuthenticationRequestDTO;
 import com.iumutdikbasan.weatherapp.security.dto.AuthenticationResponseDTO;
-import com.iumutdikbasan.weatherapp.security.dto.RegisterRequest;
+import com.iumutdikbasan.weatherapp.security.dto.RegisterRequestDTO;
 import com.iumutdikbasan.weatherapp.security.token.Token;
 import com.iumutdikbasan.weatherapp.security.token.TokenRepository;
 import com.iumutdikbasan.weatherapp.security.token.TokenType;
 import com.iumutdikbasan.weatherapp.security.user.Role;
-import com.iumutdikbasan.weatherapp.dto.user.response.UserResponseDTO;
 import com.iumutdikbasan.weatherapp.security.user.User;
 import com.iumutdikbasan.weatherapp.security.user.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,7 +38,7 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final KafkaService kafkaService;
 
-    public AuthenticationResponseDTO register(RegisterRequest request) {
+    public AuthenticationResponseDTO register(RegisterRequestDTO request) {
         try{
             validateEmailNotTaken(request.getEmail());
 

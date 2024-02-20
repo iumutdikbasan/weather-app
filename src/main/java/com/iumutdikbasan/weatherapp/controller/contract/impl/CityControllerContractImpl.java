@@ -51,6 +51,11 @@ public class CityControllerContractImpl implements CityControllerContract {
     @Override
     public CityResponseDTO save(CitySaveRequestDTO citySaveRequestDTO) {
         City city = mapper.convertToCity(citySaveRequestDTO);
+        if (city.getName() == null || city.getName().isEmpty()) {
+            kafkaService.sendMessageError("City name cannot be empty : "+ city.getName(), "logs");
+
+            throw new CityNotCreatedException(CityErrorMessage.INVALID_CITY_NAME.getMessage());
+        }
         User user = userEntityService.extractUser();
         try {
             city.setUser(user);
