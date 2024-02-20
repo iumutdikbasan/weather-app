@@ -17,19 +17,13 @@ import java.util.Map;
 public class UserController {
     private final UserControllerContract userControllerContract;
 
-//    @PostMapping
-//    public ResponseEntity<RestResponse<UserDTO>> save(@RequestBody UserSaveRequestDTO userSaveRequestDTO){
-//        UserDTO userDTO = userControllerContract.save(userSaveRequestDTO);
-//        return ResponseEntity.ok(RestResponse.of(userDTO));
-//    }
-
     @GetMapping
     public ResponseEntity<RestResponse<List<UserResponseDTO>>> findAll(){
         List<UserResponseDTO> userResponseDTOList = userControllerContract.findAll();
         return ResponseEntity.ok(RestResponse.of(userResponseDTOList));
     }
 
-    @GetMapping("/citiesByUser/{unit}")
+    @GetMapping("/user/cities/{unit}")
     public ResponseEntity<RestResponse<Map<String, WeatherData>>> findUsersSavedCitiesWeatherData(@PathVariable String unit){
         Map<String, WeatherData> citiesWeatherData = userControllerContract.findUsersSavedCitiesWeatherData(unit);
         return ResponseEntity.ok(RestResponse.of(citiesWeatherData));

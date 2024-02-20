@@ -30,7 +30,10 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable().authorizeHttpRequests()
+        http
+                .csrf()
+                .disable()
+                .authorizeHttpRequests()
                 .requestMatchers(
                         "/api/v1/auth/**",
                         "/v3/api-docs/**",
@@ -55,6 +58,7 @@ public class SecurityConfiguration {
 
 
                 /* .requestMatchers("/api/v1/admin/**").hasRole(ADMIN.name())
+
                  .requestMatchers(GET, "/api/v1/admin/**").hasAuthority(ADMIN_READ.name())
                  .requestMatchers(POST, "/api/v1/admin/**").hasAuthority(ADMIN_CREATE.name())
                  .requestMatchers(PUT, "/api/v1/admin/**").hasAuthority(ADMIN_UPDATE.name())

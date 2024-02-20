@@ -17,6 +17,7 @@ import com.iumutdikbasan.weatherapp.service.CityEntityService;
 import com.iumutdikbasan.weatherapp.service.UserEntityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -48,6 +49,7 @@ public class CityControllerContractImpl implements CityControllerContract {
         }
     }
 
+    @Transactional
     @Override
     public CityResponseDTO save(CitySaveRequestDTO citySaveRequestDTO) {
         City city = mapper.convertToCity(citySaveRequestDTO);
@@ -68,7 +70,7 @@ public class CityControllerContractImpl implements CityControllerContract {
         }
 
     }
-
+    @Transactional
     @Override
     public void delete(Long id) {
         Optional<City> cityOptional = service.findById(id);

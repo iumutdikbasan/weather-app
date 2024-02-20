@@ -2,6 +2,7 @@ package com.iumutdikbasan.weatherapp.general;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -19,11 +20,13 @@ public abstract class BaseEntityService<E extends BaseEntity, R extends JpaRepos
         if(baseAdditionalFields==null){
             baseAdditionalFields = new BaseAdditionalFields();
         }
-        if(entity.getId() == null){
-            baseAdditionalFields.setCreateDate(LocalDateTime.now());  //baseAdditionalFields.setCreatedBy(0L); (Jwt için)
+        if (entity.getId() == null) {
+            baseAdditionalFields.setCreateDate(LocalDateTime.now());
+            baseAdditionalFields.setCreatedBy(getCurrentUser());
         }
         baseAdditionalFields.setUpdateDate(LocalDateTime.now());
         //baseAdditionalFields.setUpdatedBy(0L); jwt
+        baseAdditionalFields.setUpdatedBy(getCurrentUser());
 
         entity.setBaseAdditionalFields(baseAdditionalFields);
         entity = repository.save(entity);
@@ -50,7 +53,9 @@ public abstract class BaseEntityService<E extends BaseEntity, R extends JpaRepos
     public E findByIdWithControl(Long id) {
         return repository.findById(id).orElseThrow();
     }
-
+    public String getCurrentUser() {
+        return SecurityContextHolder.getContext().getAuthentication().getName();
+    }
 
     public boolean isExist(Long id) {
         return repository.existsById(id);
