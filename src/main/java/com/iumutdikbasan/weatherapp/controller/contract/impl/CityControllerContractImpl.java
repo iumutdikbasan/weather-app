@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,26 +29,22 @@ public class CityControllerContractImpl implements CityControllerContract {
     private final CityEntityService service;
     private final CityMapper mapper;
     private final UserEntityService userEntityService;
+    private final KafkaService kafkaService;
 
-    @Override
-    public List<CityResponseDTO> findByUserId(Long userId) {
-        List<City> cityList = service.findByUserId(userId);
-        if (!cityList.isEmpty()) {
-            return mapper.convertToCityDtoList(cityList);
-        } else {
-            throw new CityNotFoundException(CityErrorMessage.CITY_NOT_FOUND_WITH_ID.getMessage() + userId);
-        }
-    }
 
     @Override
     public List<CityResponseDTO> findCityByUserId() {
         User user = userEntityService.extractUser();
 
-        List<City> cityList = service.findByUserId(user.getId());
+        List<City> cityList = service.findCitiesByUserId(user.getId());
         if (!cityList.isEmpty()) {
+            List<String> cityNames = cityList.stream().map(City::getName).collect(Collectors.toList());
+            kafkaService.sendMessageInfo("City found : " +cityNames,"logs");
             return mapper.convertToCityDtoList(cityList);
         } else {
+            kafkaService.sendMessageInfo("Error fingding city !", "logs");
             throw new CityNotFoundException(CityErrorMessage.CITY_NOT_FOUND_WITH_ID.getMessage() + user.getId());
+
         }
     }
 
@@ -58,19 +55,24 @@ public class CityControllerContractImpl implements CityControllerContract {
         try {
             city.setUser(user);
             service.save(city);
+            kafkaService.sendMessageInfo("City saved : "+city.getName(),"logs");
             return mapper.convertToCityDto(city);
         }catch (Exception e){
-            throw  new CityNotCreatedException(CityErrorMessage.CITY_NOT_CREATED_WITH_USER_ID.getMessage() + user.getId());
+           kafkaService.sendMessageError("Error saving city : " +city.getName(),"logs");
+           throw new CityNotCreatedException(CityErrorMessage.CITY_NOT_CREATED_WITH_USER_ID.getMessage()+user.getId());
         }
 
     }
 
     @Override
     public void delete(Long id) {
-        Optional<City> city = service.findById(id);
-        if(city.isPresent()) {
+        Optional<City> cityOptional = service.findById(id);
+        if(cityOptional.isPresent()) {
+            City city = cityOptional.get();
+            kafkaService.sendMessageInfo("City deleted : " + city.getName(),"logs");
             service.delete(id);
         }else{
+            kafkaService.sendMessageError("Error deleting city ! ", "logs");
             throw new CityNotDeletedException(CityErrorMessage.CITY_NOT_DELETED_WITH_ID.getMessage() + id);
         }
 

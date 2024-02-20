@@ -18,11 +18,6 @@ public class CityController {
 
     private final CityControllerContract cityControllerContract;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<RestResponse<List<CityResponseDTO>>> findByUserId(@PathVariable Long id){
-        List<CityResponseDTO> cityResponseDTOList = cityControllerContract.findByUserId(id);
-        return ResponseEntity.ok(RestResponse.of(cityResponseDTOList));
-    }
 
     @GetMapping
     public ResponseEntity<RestResponse<List<CityResponseDTO>>> findCityByUserId(){

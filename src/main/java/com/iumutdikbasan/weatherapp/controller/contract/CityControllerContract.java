@@ -6,7 +6,6 @@ import com.iumutdikbasan.weatherapp.dto.city.response.CityResponseDTO;
 import java.util.List;
 
 public interface CityControllerContract {
-    List<CityResponseDTO> findByUserId(Long userId);
     List<CityResponseDTO> findCityByUserId();
 
     CityResponseDTO save(CitySaveRequestDTO citySaveRequestDTO);
