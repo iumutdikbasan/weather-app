@@ -1,14 +1,26 @@
 package com.iumutdikbasan.weatherapp.controller.contract;
 
-import com.iumutdikbasan.weatherapp.dto.user.response.UserResponseDTO;
-import com.iumutdikbasan.weatherapp.openweathermap.WeatherData;
+import com.iumutdikbasan.weatherapp.dto.requests.UserRequestDTO;
+import com.iumutdikbasan.weatherapp.dto.responses.UserResponseDTO;
 
 import java.util.List;
-import java.util.Map;
 
 public interface UserControllerContract {
-//    UserDTO save(UserSaveRequestDTO userSaveRequestDTO);
+    UserResponseDTO createUser(UserRequestDTO userRequestDTO);
 
-    Map<String, WeatherData> findUsersSavedCitiesWeatherData(String unit);
-    List<UserResponseDTO> findAll();
+    List<UserResponseDTO> getUsers();
+
+    UserResponseDTO getUserById(Long id);
+
+    UserResponseDTO updateUser(Long id, UserRequestDTO userRequestDTO);
+
+    void deleteUser(Long id);
+
+    List<UserResponseDTO> getUsersPage(int pageNumber, int pageSize);
+
+    List<UserResponseDTO> getByUsernameStartsWith(String username);
+
+    List<UserResponseDTO> getByUsernameContaining(String username);
+
+    List<UserResponseDTO> getAllByOrderByUsernameAsc();
 }

@@ -1,88 +1,237 @@
 package com.iumutdikbasan.weatherapp.controller.contract.impl;
 
 import com.iumutdikbasan.weatherapp.controller.contract.CityControllerContract;
-import com.iumutdikbasan.weatherapp.dto.city.request.CitySaveRequestDTO;
-import com.iumutdikbasan.weatherapp.dto.city.response.CityResponseDTO;
-import com.iumutdikbasan.weatherapp.dto.user.response.UserResponseDTO;
+import com.iumutdikbasan.weatherapp.dto.requests.CityRequestDTO;
+import com.iumutdikbasan.weatherapp.dto.responses.CityResponseDTO;
 import com.iumutdikbasan.weatherapp.entity.City;
-import com.iumutdikbasan.weatherapp.errormessages.CityErrorMessage;
-import com.iumutdikbasan.weatherapp.exception.cityexceptions.CityNotCreatedException;
-import com.iumutdikbasan.weatherapp.exception.cityexceptions.CityNotDeletedException;
-import com.iumutdikbasan.weatherapp.exception.cityexceptions.CityNotFoundException;
-import com.iumutdikbasan.weatherapp.kafka.service.KafkaService;
+import com.iumutdikbasan.weatherapp.exception.exceptions.MyException;
+import com.iumutdikbasan.weatherapp.kafka.KafkaService;
 import com.iumutdikbasan.weatherapp.mapper.CityMapper;
-import com.iumutdikbasan.weatherapp.mapper.UserMapper;
-import com.iumutdikbasan.weatherapp.security.user.User;
-import com.iumutdikbasan.weatherapp.service.CityEntityService;
-import com.iumutdikbasan.weatherapp.service.UserEntityService;
+import com.iumutdikbasan.weatherapp.entity.User;
+import com.iumutdikbasan.weatherapp.service.concretes.CityServiceImpl;
+import com.iumutdikbasan.weatherapp.service.concretes.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
 public class CityControllerContractImpl implements CityControllerContract {
 
-    private final CityEntityService service;
-    private final CityMapper mapper;
-    private final UserEntityService userEntityService;
+    private final CityMapper cityMapper;
+
+    private final CityServiceImpl cityServiceImpl;
+
     private final KafkaService kafkaService;
 
+    private final UserServiceImpl userServiceImpl;
 
     @Override
-    public List<CityResponseDTO> findCityByUserId() {
-        User user = userEntityService.extractUser();
+    public CityResponseDTO saveCity(CityRequestDTO cityRequestDTO) {
 
-        List<City> cityList = service.findCitiesByUserId(user.getId());
-        if (!cityList.isEmpty()) {
-            List<String> cityNames = cityList.stream().map(City::getName).collect(Collectors.toList());
-            kafkaService.sendMessageInfo("City found : " +cityNames,"logs");
-            return mapper.convertToCityDtoList(cityList);
-        } else {
-            kafkaService.sendMessageInfo("Error fingding city !", "logs");
-            throw new CityNotFoundException(CityErrorMessage.CITY_NOT_FOUND_WITH_ID.getMessage() + user.getId());
+        String record = String.format("[%s:%d] saveCity method called", getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getLineNumber());
+        kafkaService.sendMessage(record,"debug");
 
-        }
-    }
-
-    @Transactional
-    @Override
-    public CityResponseDTO save(CitySaveRequestDTO citySaveRequestDTO) {
-        City city = mapper.convertToCity(citySaveRequestDTO);
-        if (city.getName() == null || city.getName().isEmpty()) {
-            kafkaService.sendMessageError("City name cannot be empty : "+ city.getName(), "logs");
-
-            throw new CityNotCreatedException(CityErrorMessage.INVALID_CITY_NAME.getMessage());
-        }
-        User user = userEntityService.extractUser();
-        try {
-            city.setUser(user);
-            service.save(city);
-            kafkaService.sendMessageInfo("City saved : "+city.getName(),"logs");
-            return mapper.convertToCityDto(city);
-        }catch (Exception e){
-           kafkaService.sendMessageError("Error saving city : " +city.getName(),"logs");
-           throw new CityNotCreatedException(CityErrorMessage.CITY_NOT_CREATED_WITH_USER_ID.getMessage()+user.getId());
+        Optional<User> user = userServiceImpl.findById(cityRequestDTO.userId());
+        if(!user.isPresent()){
+            throw new MyException("Kayıt Başarısız");
+        }else {
+            City city = cityMapper.toCity(cityRequestDTO);
+            city.setUser(user.get());
+            City savedCity = cityServiceImpl.save(city);
+            CityResponseDTO cityResponseDTO = cityMapper.toCityResponseDTO(savedCity);
+            record = String.format("[%s:%d] City saved: %s", getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), cityResponseDTO);
+            kafkaService.sendMessage(record,"info");
+            return cityResponseDTO;
         }
 
     }
-    @Transactional
+
     @Override
-    public void delete(Long id) {
-        Optional<City> cityOptional = service.findById(id);
-        if(cityOptional.isPresent()) {
-            City city = cityOptional.get();
-            kafkaService.sendMessageInfo("City deleted : " + city.getName(),"logs");
-            service.delete(id);
-        }else{
-            kafkaService.sendMessageError("Error deleting city ! ", "logs");
-            throw new CityNotDeletedException(CityErrorMessage.CITY_NOT_DELETED_WITH_ID.getMessage() + id);
+    public List<CityResponseDTO> getAllCities() {
+        String record = String.format("[%s:%d] getAllCities method called", getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getLineNumber());
+        kafkaService.sendMessage(record,"debug");
+
+        List<City> cities = cityServiceImpl.findAll();
+        List<CityResponseDTO> cityResponseDTOS = cities.stream().map(cityMapper::toCityResponseDTO).toList();
+
+        if(cityResponseDTOS.isEmpty()){
+            record = String.format("[%s:%d] No cities found ", getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getLineNumber());
+            kafkaService.sendMessage(record,"warn");
+            throw new MyException("Listelenecek şehir bulunamadı");
+        }
+
+        record = String.format("[%s:%d] Retrieved %d cities", getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), cityResponseDTOS.size());
+        kafkaService.sendMessage(record,"info");
+        return cityResponseDTOS;
+    }
+
+    @Override
+    public CityResponseDTO getCityById(Long id) {
+
+        String record = String.format("[%s:%d] getCityById method called", getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getLineNumber());
+        kafkaService.sendMessage(record,"debug");
+
+        Optional<City> city = cityServiceImpl.findById(id);
+        if(!city.isPresent()){
+            record = String.format("[%s:%d] City not found with id: %d", getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), id);
+            kafkaService.sendMessage(record,"warn");
+            throw new MyException("Şehir bulunamadı");
+        }else {
+            CityResponseDTO cityResponseDTO = cityMapper.toCityResponseDTO(city.get());
+            record = String.format("[%s:%d] City found: %s", getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), cityResponseDTO);
+            kafkaService.sendMessage(record,"info");
+            return cityResponseDTO;
         }
 
 
+    }
+
+    @Override
+    public List<CityResponseDTO> getCitiesByUserId(Long id) {
+
+        String record = String.format("[%s:%d] getCitiesByUserId method called", getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getLineNumber());
+        kafkaService.sendMessage(record,"debug");
+
+        Optional<User> user = userServiceImpl.findById(id);
+        if(!user.isPresent()){
+            record = String.format("[%s:%d] User not found with id: %d", getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), id);
+            kafkaService.sendMessage(record,"warn");
+            throw new MyException("Kullanıcı bulunamadı");
+        }else {
+            List<City> cities = cityServiceImpl.findByUserId(id);
+            List<CityResponseDTO> cityResponseDTOS = cities.stream().map(cityMapper::toCityResponseDTO).toList();
+            record = String.format("[%s:%d] Retrieved %d cities", getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), cityResponseDTOS.size());
+            kafkaService.sendMessage(record,"info");
+            return cityResponseDTOS;
+        }
+    }
+
+    @Override
+    public CityResponseDTO deleteCityById(Long id) {
+
+        String record = String.format("[%s:%d] deleteCityById method called", getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getLineNumber());
+        kafkaService.sendMessage(record,"debug");
+
+        Optional<City> city = cityServiceImpl.findById(id);
+        if(!city.isPresent()){
+            record = String.format("[%s:%d] City not found with id: %d", getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), id);
+            kafkaService.sendMessage(record,"warn");
+            throw new MyException("Şehir bulunamadı");
+        }else {
+            cityServiceImpl.delete(id);
+            CityResponseDTO cityResponseDTO = cityMapper.toCityResponseDTO(city.get());
+            record = String.format("[%s:%d] City deleted with id: %d", getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), id);
+            kafkaService.sendMessage(record,"info");
+            return cityResponseDTO;
+        }
+    }
+
+    @Override
+    public List<CityResponseDTO> getAllCitiesOrderByCityName() {
+
+        String record = String.format("[%s:%d] getAllCitiesOrderByCityName method called", getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getLineNumber());
+        kafkaService.sendMessage(record,"debug");
+
+        List<City> cities = cityServiceImpl.getAllByOrderByCityNameAsc();
+        List<CityResponseDTO> cityResponseDTOS = cities.stream().map(cityMapper::toCityResponseDTO).toList();
+
+        if(cityResponseDTOS.isEmpty()){
+            record = String.format("[%s:%d] No cities found ", getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getLineNumber());
+            kafkaService.sendMessage(record,"warn");
+            throw new MyException("Listelenecek şehir bulunamadı");
+        }
+
+        record = String.format("[%s:%d] Cities found: %s", getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), cityResponseDTOS);
+        kafkaService.sendMessage(record,"info");
+        return cityResponseDTOS;
+    }
+
+    @Override
+    public List<CityResponseDTO> getCitiesByCityNameContains(String cityName) {
+
+        String record = String.format("[%s:%d] getCitiesByCityNameContains method called", getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getLineNumber());
+        kafkaService.sendMessage(record,"debug");
+
+        List<City> cities = cityServiceImpl.getByCityNameContaining(cityName);
+        List<CityResponseDTO> cityResponseDTOS = cities.stream().map(cityMapper::toCityResponseDTO).toList();
+
+        if(cityResponseDTOS.isEmpty()){
+            record = String.format("[%s:%d] No cities found ", getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getLineNumber());
+            kafkaService.sendMessage(record,"warn");
+            throw new MyException("Listelenecek şehir bulunamadı");
+        }
+
+        record = String.format("[%s:%d] Cities found: %s", getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), cityResponseDTOS);
+        kafkaService.sendMessage(record,"info");
+        return cityResponseDTOS;
+    }
+
+    @Override
+    public List<CityResponseDTO> getCitiesByCityNameStartsWith(String cityName) {
+
+        String record = String.format("[%s:%d] getCitiesByCityNameStartsWith method called", getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getLineNumber());
+        kafkaService.sendMessage(record,"debug");
+
+        List<City> cities = cityServiceImpl.getByCityNameStartsWith(cityName);
+        List<CityResponseDTO> cityResponseDTOS = cities.stream().map(cityMapper::toCityResponseDTO).toList();
+
+        if(cityResponseDTOS.isEmpty()){
+            record = String.format("[%s:%d] No cities found ", getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getLineNumber());
+            kafkaService.sendMessage(record,"warn");
+            throw new MyException("Listelenecek şehir bulunamadı");
+        }
+
+        record = String.format("[%s:%d] Cities found: %s", getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), cityResponseDTOS);
+        kafkaService.sendMessage(record,"info");
+        return cityResponseDTOS;
+    }
+
+    @Override
+    public List<CityResponseDTO> getCitiesByPage(int i, int size) {
+        String record = String.format("[%s:%d] getCitiesByPage method called", getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getLineNumber());
+        kafkaService.sendMessage(record,"debug");
+
+        if(i<0 || size<0){
+            record = String.format("[%s:%d] Page number or size cannot be negative ", getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getLineNumber());
+            kafkaService.sendMessage(record,"warn");
+            throw new MyException("Sayfa numarası veya sayfa boyutu negatif olamaz");
+        }
+
+        List<City> cities = cityServiceImpl.getCitiesPage(i,size);
+        List<CityResponseDTO> cityResponseDTOS = cities.stream().map(cityMapper::toCityResponseDTO).toList();
+
+        record = String.format("[%s:%d] Retrieved %d cities for page number %d and page size %d", getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), cityResponseDTOS.size(), i, size);
+        kafkaService.sendMessage(record,"info");
+        return cityResponseDTOS;
+    }
+
+    @Override
+    public CityResponseDTO updateCity(Long id, CityRequestDTO cityRequestDTO) {
+
+        String record = String.format("[%s:%d] updateCity method called", getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getLineNumber());
+        kafkaService.sendMessage(record,"debug");
+
+        Optional<City> city = cityServiceImpl.findById(id);
+        if(!city.isPresent()){
+            record = String.format("[%s:%d] City not found with id: %d", getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), id);
+            kafkaService.sendMessage(record,"warn");
+            throw new MyException("Şehir bulunamadı");
+        }else {
+            Optional<User> user = userServiceImpl.findById(cityRequestDTO.userId());
+            City city1 = cityMapper.toCity(cityRequestDTO);
+            city1.setUser(user.get());
+            cityServiceImpl.delete(id);
+            cityServiceImpl.save(city1);
+            CityResponseDTO cityResponseDTO = cityMapper.toCityResponseDTO(city1);
+
+
+            record = String.format("[%s:%d] City updated ", getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getLineNumber());
+            kafkaService.sendMessage(record,"info");
+            return cityResponseDTO;
+        }
     }
 }
