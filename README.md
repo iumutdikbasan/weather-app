@@ -1,7 +1,14 @@
 [Türkçe Açıklama için tıklayınız](#TR)
 # EN
 # Weather App
-This application will provide weather forecasts using a RESTful web service. Users will be offered the opportunity to query the weather forecast in a city. Forecasts will be provided in 3-hour intervals covering a 5-day period. The application will receive weather forecasts using the OpenWeatherMap API.
+This project involves developing an application that provides weather forecasts using RESTful web services. The project allows users to query weather forecasts for a city and retrieves weather forecasts using the OpenWeatherMap API. In the backend, operations such as setting up a RESTful web service, managing the database, providing daily forecasts, user registration, utilizing the API, writing tests, creating documentation, and establishing logging mechanisms are performed. On the frontend, user interface and design are developed. Expectations from the project include ensuring code quality, structuring, writing tests, creating documentation, and ensuring the proper functioning of logging mechanisms.
+
+### Prerequisites
+
+**Run this command at your local** if you want to check frontend code. <a href="https://github.com/iumutdikbasan/weather-app-frontend" target="_blank">Click</a>
+```
+git clone https://github.com/iumutdikbasan/weather-app-frontend.git && cd weather-app-frontend && npm install && npm start
+```
 
 ### Backend:
 - A RESTful web service developed with Spring Boot. Provides weather forecast by taking city and other parameters.
@@ -10,7 +17,7 @@ This application will provide weather forecasts using a RESTful web service. Use
 ### User Registration: 
 - By creating an account, users can save their cities and view weather forecasts for saved cities.
 
-## Used technologies
+## Technologies Used in Backend
 
 - Spring Boot
 - Maven
@@ -22,22 +29,19 @@ This application will provide weather forecasts using a RESTful web service. Use
 - Spring Kafka (Logging)
 - SLF4J (Logging)
 - JSON Web Token (JWT)
-- PostgreSQL
+- H2DB
 - Lombok
-- MapStruct
 - Mockito(Tests)
 - SpringDoc OpenAPI (Documentation)
 - Spring Kafka Test
 - Spring Security Test
 
-## APIs
-![image](https://github.com/iumutdikbasan/weather-app/assets/54438200/e840b39b-152b-4489-b60b-ee1a7fc7f5b8)
+## Technologies Used in Frontend
 
+- ReactJs
+- Redux
+- Axios
 
-The application automatically provides API documentation with the SpringDoc OpenAPI tool. Once the application runs successfully, you can access the API documentation via the following URL:
-```
-http://localhost:8080/swagger-ui.html
-```
 
 ## Tests
 Tests were written to ensure the quality and functionality of the project.
@@ -47,47 +51,47 @@ You can use the following command to run the tests:
 mvn test
 ```
 
-## Project Details
-This project forms the backend part of a weather application.
-The application allows users to save and view weather forecasts for cities.
-Below you can find more detailed descriptions of the different components of the project.
-
-### CityController
-CityController is a controller class that processes HTTP requests related to cities. The relevant endpoints are:
-
-- GET /api/v1/cities: Returns the cities saved by the user.
-- POST /api/v1/cities: Allows the user to save a new city.
-- DELETE /api/v1/cities/{id}: Deletes cities by id.
-### UserController
-UserController is a controller class that processes HTTP requests related to users. The relevant endpoints are:
-
-- GET /api/v1/users: Get all users
-- GET /api/v1/users/user/cities/{unit}: It brings weather data of the cities saved by the user.
-### AuthenticationController
-AuthenticationController is a controller class that processes HTTP requests related to user authentication and registration. The relevant endpoints are:
-
-- POST /api/v1/auth/register: Allows the user to register.
-- POST /api/v1/auth/authenticate: Provides user authentication.
-- POST /api/v1/auth/refresh-token: Performs the user's token renewal process.
-### WeatherController
-WeatherController uses the OpenWeatherMap API to get weather forecasts.
-- GET /api/v1/weather/data: Brings weather forecasts.
 ### Includes
 Includes database integration, DTOs, service classes, and other helper classes. These enable the recording, querying and management of weather forecasts by collaborating with the relevant controller classes.
+
+## Frontend Images
+
+![Home](https://github.com/iumutdikbasan/weather-app/assets/54438200/c2f3e14f-4cdb-4beb-b482-0fb06c18570a)
+![singup](https://github.com/iumutdikbasan/weather-app/assets/54438200/4bee550f-541a-4044-bebd-99f47bf58c43)
+![login](https://github.com/iumutdikbasan/weather-app/assets/54438200/6a38c019-b743-4964-bbe9-b4c5e8e8f091)
+![havadurumu](https://github.com/iumutdikbasan/weather-app/assets/54438200/cfc0c2b5-3de4-4b5e-9802-d9eaf62ddd44)
+![Screenshot 2024-05-01 111518](https://github.com/iumutdikbasan/weather-app/assets/54438200/14a5bb5d-67fd-4467-bfca-28d42a93a667)
+![Screenshot 2024-05-01 112049](https://github.com/iumutdikbasan/weather-app/assets/54438200/c7d7ee93-eb49-4a3b-a0b8-947cb26eec79)
+
+
+The application automatically provides API documentation with the SpringDoc OpenAPI tool. Once the application runs successfully, you can access the API documentation via the following URL:
+```
+http://localhost:8080/swagger-ui.html
+```
+
+## APIs
+![apis](https://github.com/iumutdikbasan/weather-app/assets/54438200/0ed1e13b-7046-43a6-b7f3-03d43fdb3ed0)
+![apis2](https://github.com/iumutdikbasan/weather-app/assets/54438200/968223e8-333a-4dcc-b7fd-c480d8ecca35)
+
 
 ## Conclusion
 In this project, a weather application was developed using Spring Boot and other technologies.
 The project enables the creation of a RESTful web service, database integration, API usage and log tracking.
 Additionally, the project scope includes tests and API documentation.
+
 # TR
 
 
 # Hava Durumu Uygulaması
 
-Bu uygulama RESTful bir web servisi kullanarak hava durumu tahminleri sağlayacaktır. Kullanıcılara, bir şehirdeki hava durumu tahminlerini sorgulama imkanı sunulacaktır. Tahminler, 5 günlük süreyi kapsayan 3 saatlik aralıklarla sağlanacaktır. Uygulama, OpenWeatherMap API'sini kullanarak hava durumu tahminleri alacaktır.
+Bu proje, RESTful web servislerini kullanarak hava durumu tahminlerini sağlayan bir uygulamanın geliştirilmesini içerir. Proje, kullanıcıların bir şehirdeki hava durumu tahminlerini sorgulama imkanı sunar ve OpenWeatherMap API'si kullanılarak hava durumu tahminleri alır. Backend kısmında, RESTful web servisi, veritabanı yönetimi, günlük tahminlerin sağlanması, kullanıcı kaydı, API kullanımı, testlerin yazılması, dokümantasyonun oluşturulması ve loglama mekanizmasının kurulması gibi işlemler gerçekleştirilir. Frontend kısmında ise, kullanıcı arayüzü ve arayüz tasarımı geliştirilir. Projeden beklenenler arasında, kodun kalitesi, yapılandırılması, testlerin yazılması, dokümantasyonun oluşturulması ve loglama mekanizmasının doğru çalışması yer alır.
 
-## Proje İçeriği
-Proje, aşağıdaki bileşenleri içerir:
+### Prerequisites
+
+**Başlamadan önce bu komutu localinizde çalıştırın** eğer frontend kodu kontrol etmek istiyorsanız. <a href="https://github.com/iumutdikbasan/weather-app-frontend" target="_blank">Tıklayınız</a>
+```
+git clone https://github.com/iumutdikbasan/weather-app-frontend.git && cd weather-app-frontend && npm install && npm start
+```
 
 ### Backend:
 - Spring Boot ile geliştirilmiş bir RESTful web servisi. Şehir ve diğer parametreleri alarak hava durumu tahmini sağlar.
@@ -95,7 +99,8 @@ Proje, aşağıdaki bileşenleri içerir:
 - Hava durumu tahminleri, 5 günlük süreyi kapsayan 3 saatlik aralıklarla sağlanır.
 ### Kullanıcı Kaydı: 
 - Kullanıcılar, bir hesap oluşturarak şehirlerini kaydedebilir ve kaydedilen şehirler için hava durumu tahminlerini görüntüleyebilir.
-## Kullanılan Teknolojiler
+  
+## Backend Kısmında Kullanılan Teknolojiler
 Projenin geliştirilmesinde aşağıdaki teknolojiler kullanılmıştır:
 
 - Spring Boot
@@ -108,7 +113,7 @@ Projenin geliştirilmesinde aşağıdaki teknolojiler kullanılmıştır:
 - Spring Kafka (Loglama)
 - SLF4J (Loglama)
 - JSON Web Token (JWT)
-- PostgreSQL
+- H2DB
 - Lombok
 - MapStruct
 - Mockito(Test işlemleri)
@@ -116,18 +121,14 @@ Projenin geliştirilmesinde aşağıdaki teknolojiler kullanılmıştır:
 - Spring Kafka Test
 - Spring Security Test
 
+ ## Frontend kısmında kullanılan teknolojiler
+
+- ReactJs
+- Redux
+- Axios
+
 ## Hata Yakalama
 Projede bir hata yakalama mekanizması kurulmuştur. 
-
-## API Dokümantasyonu
-![image](https://github.com/iumutdikbasan/weather-app/assets/54438200/e840b39b-152b-4489-b60b-ee1a7fc7f5b8)
-
-
-Uygulama, SpringDoc OpenAPI aracıyla otomatik olarak API dokümantasyonu sağlar. Uygulama başarıyla çalıştırıldığında, API belgelerine aşağıdaki URL üzerinden erişebilirsiniz:
-```
-http://localhost:8080/swagger-ui.html
-```
-Bu sayfada, mevcut API'lerin listesini, parametrelerini, yanıtlarını ve diğer ayrıntıları bulabilirsiniz.
 
 ## Testler
 Projenin kalitesini ve işlevselliğini sağlamak için testler yazılmıştır.
@@ -137,33 +138,28 @@ Testleri çalıştırmak için aşağıdaki komutu kullanabilirsiniz:
 mvn test
 ```
 
-## Proje Ayrıntıları
-Bu proje, bir hava durumu uygulamasının backend kısmını oluşturur.
-Uygulama, kullanıcılara şehirlerin hava durumu tahminlerini kaydetme ve görüntüleme imkanı sağlar.
-Aşağıda, projenin farklı bileşenlerinin daha detaylı açıklamalarını bulabilirsiniz.
-
-### CityController
-CityController, şehirlerle ilgili HTTP isteklerini işleyen bir controller sınıfıdır. İlgili endpoint'ler şunlardır:
-
-- GET /api/v1/cities: Kullanıcının kaydettiği şehirleri getirir.
-- POST /api/v1/cities: Kullanıcının yeni bir şehir kaydetmesini sağlar.
-- DELETE /api/v1/cities/{id}: Belirli bir şehiri siler.
-### UserController
-UserController, kullanıcılarla ilgili HTTP isteklerini işleyen bir controller sınıfıdır. İlgili endpoint'ler şunlardır:
-
-- GET /api/v1/users: Tüm kullanıcıları getirir.
-- GET /api/v1/users/user/cities/{unit}: Kullanıcının kaydettiği şehirlerin hava durumu verilerini getirir.
-### AuthenticationController
-AuthenticationController, kullanıcı kimlik doğrulama ve kayıt işlemleriyle ilgili HTTP isteklerini işleyen bir controller sınıfıdır. İlgili endpoint'ler şunlardır:
-
-- POST /api/v1/auth/register: Kullanıcının kaydolmasını sağlar.
-- POST /api/v1/auth/authenticate: Kullanıcının kimlik doğrulamasını sağlar.
-- POST /api/v1/auth/refresh-token: Kullanıcının token yenileme işlemini gerçekleştirir.
-### WeatherController
-WeatherController, hava durumu tahminlerini almak için OpenWeatherMap API'sini kullanır. 
-- GET /api/v1/weather/data: Hava durumu tahminlerini döndürür.
 ### Diğer Bileşenler
 Veritabanı entegrasyonu, DTO'lar, servis sınıfları ve diğer yardımcı sınıflar yer alır. Bunlar, ilgili controller sınıflarıyla işbirliği yaparak hava durumu tahminlerinin kaydedilmesi, sorgulanması ve yönetilmesini sağlar.
+
+## Frontend Images
+
+![Home](https://github.com/iumutdikbasan/weather-app/assets/54438200/c2f3e14f-4cdb-4beb-b482-0fb06c18570a)
+![singup](https://github.com/iumutdikbasan/weather-app/assets/54438200/4bee550f-541a-4044-bebd-99f47bf58c43)
+![login](https://github.com/iumutdikbasan/weather-app/assets/54438200/6a38c019-b743-4964-bbe9-b4c5e8e8f091)
+![havadurumu](https://github.com/iumutdikbasan/weather-app/assets/54438200/cfc0c2b5-3de4-4b5e-9802-d9eaf62ddd44)
+![Screenshot 2024-05-01 111518](https://github.com/iumutdikbasan/weather-app/assets/54438200/14a5bb5d-67fd-4467-bfca-28d42a93a667)
+![Screenshot 2024-05-01 112049](https://github.com/iumutdikbasan/weather-app/assets/54438200/c7d7ee93-eb49-4a3b-a0b8-947cb26eec79)
+
+Uygulama, SpringDoc OpenAPI aracıyla otomatik olarak API dokümantasyonu sağlar. Uygulama başarıyla çalıştırıldığında, API belgelerine aşağıdaki URL üzerinden erişebilirsiniz:
+```
+http://localhost:8080/swagger-ui.html
+```
+Bu sayfada, mevcut API'lerin listesini, parametrelerini, yanıtlarını ve diğer ayrıntıları bulabilirsiniz.
+
+
+## APIs
+![apis](https://github.com/iumutdikbasan/weather-app/assets/54438200/0ed1e13b-7046-43a6-b7f3-03d43fdb3ed0)
+![apis2](https://github.com/iumutdikbasan/weather-app/assets/54438200/968223e8-333a-4dcc-b7fd-c480d8ecca35)
 
 ## Sonuç
 Bu projede, Spring Boot ve diğer teknolojileri kullanarak bir hava durumu uygulaması geliştirilmiştir.
